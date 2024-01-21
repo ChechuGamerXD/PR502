@@ -21,6 +21,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -53,7 +55,8 @@ fun TasksTopAppBar(
     onFilterActiveTasks: () -> Unit,
     onFilterCompletedTasks: () -> Unit,
     onClearCompletedTasks: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onClearAllTasks: () -> Unit
 ) {
     TopAppBar(
         title = { Text(text = stringResource(id = R.string.app_name)) },
@@ -64,7 +67,7 @@ fun TasksTopAppBar(
         },
         actions = {
             FilterTasksMenu(onFilterAllTasks, onFilterActiveTasks, onFilterCompletedTasks)
-            MoreTasksMenu(onClearCompletedTasks, onRefresh)
+            MoreTasksMenu(onClearCompletedTasks, onRefresh, onClearAllTasks)
         },
         modifier = Modifier.fillMaxWidth()
     )
@@ -99,8 +102,11 @@ private fun FilterTasksMenu(
 @Composable
 private fun MoreTasksMenu(
     onClearCompletedTasks: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onClearAllTasks: () -> Unit
 ) {
+    var showConfirmationDialog by remember { mutableStateOf(false) }
+
     TopAppBarDropdownMenu(
         iconContent = {
             Icon(Icons.Filled.MoreVert, stringResource(id = R.string.menu_more))
@@ -112,8 +118,47 @@ private fun MoreTasksMenu(
         DropdownMenuItem(onClick = { onRefresh(); closeMenu() }) {
             Text(text = stringResource(id = R.string.refresh))
         }
+
+        DropdownMenuItem(onClick = {
+            showConfirmationDialog = true
+            closeMenu()
+        }) {
+            Text(text = stringResource(id = R.string.menu_clear_all_tasks))
+        }
+    }
+
+    if (showConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmationDialog = false },
+            title = {
+                Text(text = stringResource(id = R.string.confirmation_dialog_title))
+            },
+            text = {
+                Text(text = stringResource(id = R.string.confirmation_dialog_message))
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onClearAllTasks()
+                        showConfirmationDialog = false
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.confirmation_dialog_title))
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showConfirmationDialog = false
+                    }
+                ) {
+                    Text(text = stringResource(id = R.string.cancel_button))
+                }
+            }
+        )
     }
 }
+
 
 @Composable
 private fun TopAppBarDropdownMenu(
@@ -187,7 +232,7 @@ fun AddEditTaskTopAppBar(@StringRes title: Int, onBack: () -> Unit) {
 private fun TasksTopAppBarPreview() {
     AppCompatTheme {
         Surface {
-            TasksTopAppBar({}, {}, {}, {}, {}, {})
+            TasksTopAppBar({}, {}, {}, {}, {}, {}) {}
         }
     }
 }

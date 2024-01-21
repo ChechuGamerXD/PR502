@@ -64,6 +64,14 @@
     <string name="successfully_deleted_task_message">Task was deleted</string>
     <string name="successfully_added_task_message">Task added</string>
     <string name="no_data_description" />
+    <string name="all_tasks_deleted">All tasks deleted</string>
+    <string name="menu_clear_all_tasks">Clear All Tasks</string>
+
+
+
+    <string name="cancel_button">Cancel</string>
+    <string name="confirmation_dialog_title">Confirm</string>
+    <string name="confirmation_dialog_message">Are you sure you want to proceed?</string>
 
     <!-- Content Descriptions -->
     <string name="tasks_header_image_content_description">Tasks header image</string>
